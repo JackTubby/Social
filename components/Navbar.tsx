@@ -7,10 +7,10 @@ const Navbar = () => {
   const username = null;
 
   return (
-    <nav>
+    <nav className="h-32 flex-wrap" aria-label="top navbar">
       {/* Link to hope page shown to all users */}
-      <ul>
-        <li>
+      <ul className="flex right-0 p-10">
+        <li className="pr-10">
           <Link href="/">
             <button>FEED</button>
           </Link>
