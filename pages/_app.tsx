@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Navbar from "../components/Navbar";
+import BottomNavbar from "../components/BottomnNavbar";
 import { Toaster } from "react-hot-toast";
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -8,6 +9,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <Navbar />
       <Component {...pageProps} />
+      <BottomNavbar />
       <Toaster />
     </>
   );
