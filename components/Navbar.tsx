@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 import Image from "next/image";
 
 // Top nav
@@ -7,45 +7,47 @@ const Navbar = () => {
   const username = null;
 
   return (
-    <nav className="h-32 flex-wrap" aria-label="top navbar">
+    <nav className="flex pt-5 bg-black h-30" aria-label="top navbar">
+      <h1 className="pl-10 text-white inline-block align-middle">Social</h1>
       {/* Link to hope page shown to all users */}
-      <ul className="flex right-0 p-10">
-        <li className="pr-10">
-          <Link href="/">
-            <button>FEED</button>
-          </Link>
-        </li>
-
-        {/* user is signed-in and has username */}
-        {username && (
-          <>
-          {/* Link to admin page */}
-            <li>
-              <Link href="/admin">
-                <button>Write Posts</button>
-              </Link>
-            </li>
-            {/* Link to the profile page */}
-            <li>
-            {/* Interpolate in a string with the user's username */}
-              <Link href={`/${username}`}>
-                <img src={user?.photoURL} />
-              </Link>
-            </li>
-          </>
-        )}
-
-        {/* user is not signed OR has not created username */}
-        {!username && (
-          <li>
-        {/* Link to sign-in page */}
-            <Link href="/enter">
-              <button className="btn-blue">Log in</button>
+      <ul className="absolute right-10">
+        <div className="flex">
+          <li className="pr-10">
+            <Link href="/">
+              <button className="text-white">Feed</button>
             </Link>
           </li>
-        )}
+          {/* user is signed-in and has username */}
+          {username && (
+            <>
+              {/* Link to admin page */}
+              <li>
+                <Link href="/admin">
+                  <button>Write Posts</button>
+                </Link>
+              </li>
+              {/* Link to the profile page */}
+              <li>
+                {/* Interpolate in a string with the user's username */}
+                <Link href={`/${username}`}>
+                  <img src={user?.photoURL} />
+                </Link>
+              </li>
+            </>
+          )}
+
+          {/* user is not signed OR has not created username */}
+          {!username && (
+            <li>
+              {/* Link to sign-in page */}
+              <Link href="/enter">
+                <button className="text-white">Log in</button>
+              </Link>
+            </li>
+          )}
+        </div>
       </ul>
     </nav>
   );
-}
+};
 export default Navbar;
