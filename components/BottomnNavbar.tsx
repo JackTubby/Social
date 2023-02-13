@@ -21,10 +21,12 @@ const BottomNavbar = () => {
             <FontAwesomeIcon className="p-5 text-white" icon={faMessage} />
           </div>
           <div className="px-10 text-2xl">
+            <div className="w-full border rounded-full bg-gradient-to-br from-purple to-pink">
             <FontAwesomeIcon
               className="p-5 text-white bg-fuchsia-500 rounded-full min-h-fit"
               icon={faPlus}
             />
+            </div>
           </div>
           <div className="px-10 text-2xl">
             <FontAwesomeIcon className="p-5 text-white" icon={faBell} />
