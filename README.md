@@ -5,11 +5,25 @@ Social is a social blog posting website.
 > - [User Stories] ()
 > - [UX] ()
 > - [Features] ()
-> - [Technologies Used] ()
+> - [Technologies] ()
 > - [Testing] ()
 > - [Deployment] ()
 > - [Resources] ()
 > - [Credits] ()
+
+## User Stories
+
+## UX
+
+## Features
+
+## Technologies
+
+## Testing
+
+## Deployment
+
+## Resoruces
 
 ## Credits
 * [React Hot Toasts](https://react-hot-toast.com/)
