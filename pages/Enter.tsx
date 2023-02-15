@@ -1,9 +1,10 @@
 import { auth, googleAuthProvider } from "@/lib/firebase";
+import { useContext } from 'react';
+import { UserContext } from "@/lib/context";
 
 const EnterPage = () => {
-  // We need to know the users auth context to know what to show
-  const user = null;
-  const username = null;
+  const { user, username } = useContext(UserContext);
+
   // User can be in three different states
   // 1 user signed out <SignInButton />
   // 2 user signed in, but missing username <UsernameForm />
@@ -26,6 +27,14 @@ export default EnterPage;
 
 // Sign in with Google btn
 const SignInButton = () => {
+    // Async func that will wait a sign-in with pop-up using the google auth provider.
+    const signInWithGoogle = async () => {
+        try {
+            await auth.signInWithPopup(googleAuthProvider);
+        } catch (err) {
+            console.log(err);
+        }
+    };
     return (
         <>
         <button className="text-white m-20 bg-purple p-4" onClick={signInWithGoogle}>Sign In with google</button>
