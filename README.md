@@ -10,3 +10,6 @@ Social is a social blog posting website.
 > - [Deployment] ()
 > - [Resources] ()
 > - [Credits] ()
+
+## Credits
+* [React Hot Toasts](https://react-hot-toast.com/)
