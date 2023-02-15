@@ -19,5 +19,7 @@ firebase.initializeApp(firebaseConfig);
 
 // Export some variables that represent some of the firebase SDK's that we want to work with
 export const auth = firebase.auth();
+export const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
+
 export const firestore = firebase.firestore();
 export const storage = firebase.storage();
