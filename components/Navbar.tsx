@@ -1,10 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
+import { useContext } from 'react';
+import { UserContext } from "@/lib/context";
 
 // Top nav
 const Navbar = () => {
-  const user = null;
-  const username = null;
+
+  const { user, username } = useContext(UserContext);
 
   return (
     <nav className="flex pt-5 bg-black h-30" aria-label="top navbar">
