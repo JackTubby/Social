@@ -32,6 +32,8 @@ Social is a social blog posting website.
 
 ## Credits
 * [React Hot Toasts](https://react-hot-toast.com/)
+* [Font Awesome](https://fontawesome.com/)
+* [Google Fonts](https://fonts.google.com/)
 
 ### Support
 For any queries or support contact jacktubby2@hotmail.com
