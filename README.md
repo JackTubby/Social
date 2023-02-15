@@ -23,7 +23,5 @@ Social is a social blog posting website.
 
 ## Deployment
 
-## Resoruces
-
 ## Credits
 * [React Hot Toasts](https://react-hot-toast.com/)
