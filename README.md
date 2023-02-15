@@ -18,6 +18,13 @@ Social is a social blog posting website.
 ## Features
 
 ## Technologies
+* React
+* Next.js
+* TypeScript
+* Tailwind
+* Firebase
+* Git
+* GitHub
 
 ## Testing
 
