@@ -1,6 +1,7 @@
 import { auth, firestore, googleAuthProvider } from "@/lib/firebase";
+import { doc, getDoc, getFirestore, writeBatch } from 'firebase/firestore';
 import { useEffect, useState, useCallback, useContext } from 'react';
-import debounce from 'lodash.debounce';
+// import debounce from 'lodash.debounce';
 import { UserContext } from "@/lib/context";
 import Background from "./cardbackground.png";
 import { signOut } from "firebase/auth";
@@ -68,37 +69,54 @@ const SignOutButton = () => {
 };
 
 // Username form for user to select username
-const UsernameForm = () => {
+// Username form
+function UsernameForm(): JSX.Element | null {
   // Value user types in
-  const [formValue, setFormValue] = useState("");
+  const [formValue, setFormValue] = useState('');
   // Username is valid selection
   const [isValid, setIsValid] = useState(false);
   // Set loading when we are checking if the username is valid
   const [loading, setLoading] = useState(false);
-  // Get user and username from the global context
+// Get user and username from the global context
   const { user, username } = useContext(UserContext);
-  useEffect(() => {
-    checkUsername(formValue);
-  }, [formValue])
+
+  const onSubmit = async (e: any) => {
+      e.preventDefault();
+
+      // Create refs for both documents
+      const userDoc = doc(getFirestore(), 'users', user.uid);
+      const usernameDoc = doc(getFirestore(), 'usernames', formValue);
+
+      // Commit both docs together as a batch write.
+      const batch = writeBatch(getFirestore());
+      batch.set(userDoc, { username: formValue, photoURL: user.photoURL, displayName: user.displayName });
+      batch.set(usernameDoc, { uid: user.uid });
+
+      await batch.commit().catch((e: any) => console.error(e));
+  };
 
   const onChange = (e: any): void => {
-    // Force the form value typed in the form to match correct format
-    // Get input value
-    const val = e.target.value.toLowerCase();
-    const re = /^(?=[a-zA-Z0-9._]{3,15}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
-    // Only set form value if length is < 3 OR it passes regex
-    if (val.length < 3) {
-      setFormValue(val);
-      setLoading(false);
-      setIsValid(false);
-    }
+      // Force form value typed in form to match correct format
+      // Get input value
+      const val = e.target.value.toLowerCase();
+      const re = /^(?=[a-zA-Z0-9._]{3,15}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+
+      // Only set form value if length is < 3 OR it passes regex
+      if (val.length < 3) {
+          setFormValue(val);
+          setLoading(false);
+          setIsValid(false);
+      }
     // Check regex is correct
-    if (re.test(val)) {
-      setFormValue(val);
-      setLoading(true);
-      setIsValid(false);
-    }
-  }
+      if (re.test(val)) {
+          setFormValue(val);
+          setLoading(true);
+          setIsValid(false);
+      }
+  };
+
+  const [timer] = useState(0);
+
   // Check the database for username match after each debounced change
   // useCallback is required for the debounce to work 
   // We do not want to run this fun everytime the form value changes
@@ -108,65 +126,62 @@ const UsernameForm = () => {
   // Also for this to run with react we have to use the useCallback hook because
   // Anytime React re-renders it creates a new func obj that will not be debounced 
   // Where as use Callback allows the func to be memorised so it can be debounced between state changes.
-  const checkUsername = useCallback(
-    debounce(async (username) => {
-      if (username.length >= 3) {
-        // reference of the doc location
-        const ref = firestore.doc(`usernames/${username}`);
-        // See if doc exists
-        const { exists } = await ref.get();
-        console.log('Firestore read executed!');
-        // If it does not exist then we know the username is valid
-        setIsValid(!exists);
-        setLoading(false);
-      }
-    }, 500),
-    []
-  );
+  const checkUsername = useCallback((username: string): void => {
+      //debounce(async () => {
+      clearTimeout(timer);
+      setTimeout(async () => {
+          if (username.length >= 3) {
+            // reference of the doc location
+              const ref = doc(getFirestore(), 'usernames', username);
+              // See if doc exists
+              const snap = await getDoc(ref);
+              // If it does not exist then we know the username is valid
+              console.log('Firestore read executed!', snap.exists());
+              setIsValid(!snap.exists());
+              setLoading(false);
+          }
+      }, 500);
+      // }, 500)
+  }, [timer]);
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    // Create refs for both documents
-    const userDoc = firestore.doc(`users/${user.uid}`);
-    const usernameDoc = firestore.doc(`usernames/${formValue}`);
-    // Commit both docs together as a batch write
-    const batch = firestore.batch();
-    batch.set(userDoc, { username: formValue, photoURL: user.photoURL, displayName: user.displayName })
-    batch.set(usernameDoc, {uid: user.uid});
-    await batch.commit();
-  }
+  useEffect((): void => {
+      checkUsername(formValue);
+  }, [formValue, checkUsername]);
 
-  function UsernameMessage({ username, isValid, loading }: any) {
-    if (loading) {
-      return <p>Checking...</p>
-    } else if (isValid) {
-      return <p>{username} is available!</p>
-    } else if (username && !isValid) {
-      return <p>That username is taken!</p>
-    } else {
-      return <p></p>
-    }
-  }
 
   return (
-    !username && (
-      <section>
-        <h3>Choose Username</h3>
-        <form>
-          {/* user types selected username and bind it to the formValue state */}
-          <input type="text" name="username" placeholder="username" value={formValue} onChange={onChange}/>
-          <UsernameMessage username={formValue} isValid={isValid} loading={loading}/>
-          <button type="submit" disabled={!isValid}>Choose Username</button>
-          <h3>Debug State</h3>
-          <div>
-            Username: {formValue}
-            <br />
-            Loading: {loading.toString()}
-            <br />
-            Username Valid: {isValid.toString()}
-          </div>
-        </form>
-      </section>
-    )
-  );
-};
+      !username && (
+          <section>
+              <h3>Choose Username</h3>
+              <form onSubmit={onSubmit}>
+                  <input name="username" placeholder="myname" value={formValue} onChange={onChange} />
+                  <UsernameMessage username={formValue} isValid={isValid} loading={loading} />
+                  <button type="submit" className="btn-green" disabled={!isValid}>
+                      Choose
+                  </button>
+
+                  <h3>Debug State</h3>
+                  <div>
+                      Username: {formValue}
+                      <br />
+                      Loading: {loading.toString()}
+                      <br />
+                      Username Valid: {isValid.toString()}
+                  </div>
+              </form>
+          </section>
+      )
+  ) || null;
+}
+
+function UsernameMessage({ username, isValid, loading }: { username: string, isValid: boolean, loading: boolean }): JSX.Element {
+  if (loading) {
+      return <p>Checking...</p>;
+  } else if (isValid) {
+      return <p className="text-success">{username} is available!</p>;
+  } else if (username && !isValid) {
+      return <p className="text-danger">That username is taken!</p>;
+  } else {
+      return <p></p>;
+  }
+}
