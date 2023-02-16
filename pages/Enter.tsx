@@ -81,7 +81,7 @@ const UsernameForm = () => {
     checkUsername(formValue);
   }, [formValue])
 
-  const onChange = (e) => {
+  const onChange = (e: any): void => {
     // Force the form value typed in the form to match correct format
     // Get input value
     const val = e.target.value.toLowerCase();
@@ -124,6 +124,30 @@ const UsernameForm = () => {
     []
   );
 
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    // Create refs for both documents
+    const userDoc = firestore.doc(`users/${user.uid}`);
+    const usernameDoc = firestore.doc(`usernames/${formValue}`);
+    // Commit both docs together as a batch write
+    const batch = firestore.batch();
+    batch.set(userDoc, { username: formValue, photoURL: user.photoURL, displayName: user.displayName })
+    batch.set(usernameDoc, {uid: user.uid});
+    await batch.commit();
+  }
+
+  function UsernameMessage({ username, isValid, loading }: any) {
+    if (loading) {
+      return <p>Checking...</p>
+    } else if (isValid) {
+      return <p>{username} is available!</p>
+    } else if (username && !isValid) {
+      return <p>That username is taken!</p>
+    } else {
+      return <p></p>
+    }
+  }
+
   return (
     !username && (
       <section>
@@ -131,6 +155,7 @@ const UsernameForm = () => {
         <form>
           {/* user types selected username and bind it to the formValue state */}
           <input type="text" name="username" placeholder="username" value={formValue} onChange={onChange}/>
+          <UsernameMessage username={formValue} isValid={isValid} loading={loading}/>
           <button type="submit" disabled={!isValid}>Choose Username</button>
           <h3>Debug State</h3>
           <div>
