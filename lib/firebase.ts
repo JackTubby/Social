@@ -23,3 +23,20 @@ export const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
 
 export const firestore = firebase.firestore();
 export const storage = firebase.storage();
+
+// Helper functions
+/**
+ * Gets a users/{uid} document with username
+ * @param {string} username
+ */
+
+export async function getUserWithUsername(username) {
+  // Make a reference to the users collection
+  const usersRef = firestore.collection('users');
+  // Then run a query where the username is equal to the db username and returns the first hit
+  const query = usersRef.where('username', '==', username).limit(1);
+  // Then we run the query
+  const usersDoc = (await query.get()).docs[0];
+  // Then we take the first doc and return it
+  return usersDoc;
+}
