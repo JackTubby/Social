@@ -2,6 +2,7 @@ import { auth, googleAuthProvider } from "@/lib/firebase";
 import { useContext } from "react";
 import { UserContext } from "@/lib/context";
 import Background from "./cardbackground.png";
+import { signOut } from "firebase/auth";
 
 const EnterPage = () => {
   const { user, username } = useContext(UserContext);
@@ -16,20 +17,20 @@ const EnterPage = () => {
   return (
     <main>
       <div className="flex items-center h-screen justify-center">
-      <div className="flex flex-row h-96 w-7/12 text-center bg-darkGrey border-4 border-deepGrey rounded-md">
-        <div className="w-1/2">ss</div>
-        <div className="w-1/2">
-          {user ? (
-            !username ? (
-              <UsernameForm />
+        <div className="flex flex-row h-96 w-7/12 text-center bg-darkGrey border-4 border-deepGrey rounded-md">
+          <div className="w-1/2">ss</div>
+          <div className="w-1/2">
+            {user ? (
+              !username ? (
+                <UsernameForm />
+              ) : (
+                <SignOutButton />
+              )
             ) : (
-              <SignOutButton />
-            )
-          ) : (
-            <SignInButton />
-          )}
+              <SignInButton />
+            )}
+          </div>
         </div>
-      </div>
       </div>
     </main>
   );
@@ -54,6 +55,7 @@ const SignInButton = () => {
       >
         Sign In with google
       </button>
+      <button>Sign in Anonymously</button>
     </>
   );
 };
@@ -61,11 +63,7 @@ const SignInButton = () => {
 // Sign out btn
 const SignOutButton = () => {
   // Removes the JSON web token
-  return (
-    <button className="text-white" onClick={() => auth.signOut()}>
-      Sign Out
-    </button>
-  );
+    return <button className="text-white" onClick={() => signOut(auth).catch((e: any) => console.error(e))}>Sign Out</button>;
 };
 
 // Username form for user to select username
