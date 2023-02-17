@@ -30,7 +30,7 @@ export const storage = firebase.storage();
  * @param {string} username
  */
 
-export async function getUserWithUsername(username) {
+export async function getUserWithUsername(username: any) {
   // Make a reference to the users collection
   const usersRef = firestore.collection('users');
   // Then run a query where the username is equal to the db username and returns the first hit
@@ -45,7 +45,7 @@ export async function getUserWithUsername(username) {
  * Converts a firestore document to JSON
  * @param {DocumentSnapshot} doc
  */
-export function postToJSON(doc) {
+export function postToJSON(doc: { data: () => any; }) {
   const data = doc.data();
   return {
     ...data,
