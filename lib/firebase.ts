@@ -40,3 +40,17 @@ export async function getUserWithUsername(username) {
   // Then we take the first doc and return it
   return usersDoc;
 }
+
+/**
+ * Converts a firestore document to JSON
+ * @param {DocumentSnapshot} doc
+ */
+export function postToJSON(doc) {
+  const data = doc.data();
+  return {
+    ...data,
+    // Firestore timestamp NOT serializable to JSON
+    createdAt: data.createdAt.toMillis(),
+    updatedAt: data.updatedAt.toMillis(),
+  };
+}
